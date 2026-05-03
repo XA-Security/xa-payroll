@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
   // Required for @sparticuz/chromium to work correctly on Vercel
   // ws: Prevents WebSocket bundling issues and module resolution errors in Node.js runtime
   // @assetval/nachos: Uses .ts as entry point, needs to be external for Turbopack
-  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core", "ws", "@assetval/nachos"],
+  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core", "ws", "@assetval/nachos", "@react-pdf/renderer"],
   // Use standalone mode for Vercel deployment
   output: "standalone",
   // Allow build to proceed with TypeScript type mismatches
@@ -89,6 +89,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "**.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "www.humanity.com",
       },
     ],
   },
