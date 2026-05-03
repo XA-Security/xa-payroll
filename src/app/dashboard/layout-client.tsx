@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, Suspense } from "react";
+import React, { useEffect, useState, useCallback, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -93,7 +93,6 @@ function DashboardLayoutContent({
         // Handle first-time Microsoft welcome flag
         if (searchParams.get('welcome') === '1') {
           authLogger.info('[Auth:Dashboard]', 'First-time Microsoft user, showing welcome');
-          setShowMicrosoftWelcome(true);
           router.replace('/dashboard');
         }
         return;
