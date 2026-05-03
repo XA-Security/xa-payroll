@@ -23,9 +23,9 @@ import { usePermissions } from "@/hooks/use-permissions"
 
 // XA Security company data
 const companyData = {
-  name: "Digital XA",
+  name: "XA Payroll Portal",
   logo: "/Logos/Stacked Wordmark/PNG/72 ppi/XA_Stacked Logo-Black.png",
-  tagline: "Operations Platform",
+  tagline: "Payroll Management",
 }
 
 // Version badge configuration
@@ -125,7 +125,7 @@ export function AppSidebar({
   }, [isAdmin, permissionsLoading, userId, can])
 
   return (
-    <Sidebar collapsible="icon" {...props} className="print:hidden">
+    <Sidebar collapsible="icon" {...props} className="print:hidden !border-0">
       <SidebarHeader>
         <div className="flex items-center gap-3 px-2 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-black text-white hover:bg-black/90 transition-colors overflow-hidden" title="Digital XA Portal">

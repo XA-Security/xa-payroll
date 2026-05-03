@@ -19,13 +19,13 @@ interface HumanityEmployee {
 
 interface QBOEmployee {
   id: string
-  givenName?: string
-  familyName?: string
-  primaryAddr?: {
+  firstName?: string
+  lastName?: string
+  primaryAddress?: {
     city?: string
     countrySubDivisionCode?: string
   }
-  active?: boolean
+  status?: string
 }
 
 export default function EmployeeListsPage() {
@@ -53,7 +53,7 @@ export default function EmployeeListsPage() {
       const res = await fetch("/api/humanity/employees")
       if (!res.ok) throw new Error("Failed to fetch Humanity employees")
       const data = await res.json()
-      setHumanityEmployees(data)
+      setHumanityEmployees(data.data ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
@@ -66,7 +66,7 @@ export default function EmployeeListsPage() {
       const res = await fetch("/api/quickbooks/payroll/employees")
       if (!res.ok) throw new Error("Failed to fetch QBO employees")
       const data = await res.json()
-      setQboEmployees(data)
+      setQboEmployees(data.employees ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
@@ -176,12 +176,12 @@ export default function EmployeeListsPage() {
                 ) : (
                   qboEmployees.map((emp) => (
                     <TableRow key={emp.id}>
-                      <TableCell>{`${emp.givenName || ""} ${emp.familyName || ""}`}</TableCell>
-                      <TableCell>{emp.primaryAddr?.city || "-"}</TableCell>
-                      <TableCell>{emp.primaryAddr?.countrySubDivisionCode || "-"}</TableCell>
+                      <TableCell>{`${emp.firstName || ""} ${emp.lastName || ""}`}</TableCell>
+                      <TableCell>{emp.primaryAddress?.city || "-"}</TableCell>
+                      <TableCell>{emp.primaryAddress?.countrySubDivisionCode || "-"}</TableCell>
                       <TableCell>
-                        <Badge variant={emp.active ? "default" : "secondary"}>
-                          {emp.active ? "Active" : "Inactive"}
+                        <Badge variant={emp.status === "ACTIVE" ? "default" : "secondary"}>
+                          {emp.status || "Unknown"}
                         </Badge>
                       </TableCell>
                     </TableRow>

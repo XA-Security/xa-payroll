@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://digital.xasecurity.ca"),
   title: {
-    default: "Digital XA",
-    template: "%s | Digital XA"
+    default: "XA Payroll Portal",
+    template: "%s | XA Payroll Portal"
   },
   description: "Operations platform for XA Security",
   icons: {

@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import {
   ChevronsUpDown,
   LogOut,
@@ -38,6 +39,11 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleLogout = () => {
     // Clear user data from localStorage
@@ -79,7 +85,7 @@ export function NavUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-56 rounded-lg border-0 shadow-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={mounted && isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
