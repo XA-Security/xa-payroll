@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import {
   DollarSign,
@@ -19,6 +19,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { usePermissions } from "@/hooks/use-permissions"
 
 // XA Security company data
 const companyData = {
@@ -84,14 +85,6 @@ export function AppSidebar({
     const computeNavData = () => {
       // Compute filtered nav data
       let filteredData = navMainData.map((section) => {
-        // Filter out Client Validation if feature is disabled
-        if (section.title === "Utilities" && section.items && !isClientValidationEnabled()) {
-          return {
-            ...section,
-            items: section.items.filter((item) => item.title !== "Client Validation"),
-          } as typeof section
-        }
-
         // Filter items by admin status
         if (section.items) {
           return {
