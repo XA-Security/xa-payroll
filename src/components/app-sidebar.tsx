@@ -125,7 +125,7 @@ export function AppSidebar({
   }, [isAdmin, permissionsLoading, userId, can])
 
   return (
-    <Sidebar collapsible="icon" {...props} className="print:hidden !border-0">
+    <Sidebar collapsible="icon" {...props} className="print:hidden">
       <SidebarHeader>
         <div className="flex items-center gap-3 px-2 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-black text-white hover:bg-black/90 transition-colors overflow-hidden" title="XA Payroll Portal">
