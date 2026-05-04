@@ -9,12 +9,9 @@ import { Badge } from "@/components/ui/badge"
 
 interface HumanityEmployee {
   eid: string
-  first_name: string
-  last_name: string
+  name: string
   job_title?: string
   status_in_humanity?: string
-  status_in_adp?: string
-  adp_employee_id?: string
 }
 
 interface QBOEmployee {
@@ -101,8 +98,6 @@ export default function EmployeeListsPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Job Title</TableHead>
                   <TableHead>Humanity Status</TableHead>
-                  <TableHead>ADP Status</TableHead>
-                  <TableHead>ADP Employee ID</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -112,32 +107,24 @@ export default function EmployeeListsPage() {
                       <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                     </TableRow>
                   ))
                 ) : humanityEmployees.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
                       No employees found
                     </TableCell>
                   </TableRow>
                 ) : (
                   humanityEmployees.map((emp) => (
                     <TableRow key={emp.eid}>
-                      <TableCell>{`${emp.first_name} ${emp.last_name}`}</TableCell>
+                      <TableCell>{emp.name}</TableCell>
                       <TableCell>{emp.job_title || "-"}</TableCell>
                       <TableCell>
                         {emp.status_in_humanity && (
                           <Badge variant="secondary">{emp.status_in_humanity}</Badge>
                         )}
                       </TableCell>
-                      <TableCell>
-                        {emp.status_in_adp && (
-                          <Badge variant="secondary">{emp.status_in_adp}</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>{emp.adp_employee_id || "-"}</TableCell>
                     </TableRow>
                   ))
                 )}

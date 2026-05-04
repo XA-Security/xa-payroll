@@ -33,17 +33,15 @@ export const GET = withAuth(async (_request: NextRequest, _user) => {
         // Only fetch users with the external IDs that exist in Humanity response
         const { data: dbUsers, error: dbError } = await supabase
           .from("Users")
-          .select("external_id, status_in_humanity, status_in_adp, adp_employee_id")
+          .select("external_id, status_in_humanity")
           .in("external_id", externalIds);
 
         if (!dbError && dbUsers) {
-          const statusMap = new Map<string, { status_in_humanity?: string; status_in_adp?: string; adp_employee_id?: string }>();
+          const statusMap = new Map<string, { status_in_humanity?: string }>();
           dbUsers.forEach((user: any) => {
             if (user.external_id) {
               statusMap.set(user.external_id, {
                 status_in_humanity: user.status_in_humanity,
-                status_in_adp: user.status_in_adp,
-                adp_employee_id: user.adp_employee_id,
               });
             }
           });
