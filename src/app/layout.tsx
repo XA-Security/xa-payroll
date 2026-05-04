@@ -26,14 +26,14 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
   },
   openGraph: {
-    title: "Digital XA",
+    title: "XA Payroll",
     description: "Operations platform for XA Security",
     images: [
       {
         url: "/platform-public.png",
         width: 1200,
         height: 630,
-        alt: "Digital XA Platform",
+        alt: "XA Payroll",
       },
     ],
     url: process.env.NEXT_PUBLIC_APP_URL || "https://digital.xasecurity.ca",

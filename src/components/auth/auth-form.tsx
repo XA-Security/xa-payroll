@@ -27,7 +27,7 @@ export default function AuthForm({ onSuccess, defaultTab = "login" }: AuthFormPr
   return (
     <Card className="w-full shadow-2xl border border-white/30 bg-white">
       <CardHeader className="text-center pb-4">
-        <CardTitle className="text-2xl font-bold text-black">Digital XA</CardTitle>
+        <CardTitle className="text-2xl font-bold text-black">XA Payroll</CardTitle>
         <CardDescription className="text-balance text-gray-600">
           Sign in to your account or request access
         </CardDescription>
