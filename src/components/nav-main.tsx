@@ -156,9 +156,11 @@ export function NavMain({
                         </span>
                       </>
                     ) : item.isExternal ? (
-                      <a href={item.url} target="_blank" rel="noopener noreferrer">
-                        {item.icon && <item.icon className="size-4" />}
-                        <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-2 w-full">
+                        <div className="flex items-center gap-2">
+                          {item.icon && <item.icon className="size-4" />}
+                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                        </div>
                         {isNumericBadge(item.badge) && (
                           <span className="ml-auto text-xs font-semibold text-white bg-red-500 rounded-full size-5 flex items-center justify-center group-data-[collapsible=icon]:hidden">
                             {item.badge}
@@ -166,9 +168,11 @@ export function NavMain({
                         )}
                       </a>
                     ) : (
-                      <a href={item.url}>
-                        {item.icon && <item.icon className="size-4" />}
-                        <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                      <a href={item.url} className="flex items-center justify-between gap-2 w-full">
+                        <div className="flex items-center gap-2">
+                          {item.icon && <item.icon className="size-4" />}
+                          <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                        </div>
                         {isNumericBadge(item.badge) && (
                           <span className="ml-auto text-xs font-semibold text-white bg-red-500 rounded-full size-5 flex items-center justify-center group-data-[collapsible=icon]:hidden">
                             {item.badge}
