@@ -6,11 +6,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 interface HumanityEmployee {
+  id: string
   eid: string
   name: string
-  job_title?: string
+  email?: string
+  phone?: string
+  mobile?: string
+  status?: number
   status_in_humanity?: string
 }
 
@@ -18,10 +23,8 @@ interface QBOEmployee {
   id: string
   firstName?: string
   lastName?: string
-  primaryAddress?: {
-    city?: string
-    countrySubDivisionCode?: string
-  }
+  primaryEmailAddress?: { Address: string }
+  mobile?: { FreeFormNumber: string }
   status?: string
 }
 
@@ -61,7 +64,13 @@ export default function EmployeeListsPage() {
   async function fetchQboEmployees() {
     try {
       const res = await fetch("/api/quickbooks/payroll/employees")
-      if (!res.ok) throw new Error("Failed to fetch QBO employees")
+      if (!res.ok) {
+        const data = await res.json()
+        if (data.requiresReauthorization) {
+          throw new Error("QuickBooks authorization has expired. Please reconnect the integration.")
+        }
+        throw new Error("Failed to fetch QBO employees")
+      }
       const data = await res.json()
       setQboEmployees(data.employees ?? [])
     } catch (err) {
@@ -95,9 +104,12 @@ export default function EmployeeListsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Job Title</TableHead>
-                  <TableHead>Humanity Status</TableHead>
+                  <TableHead>Employee Name</TableHead>
+                  <TableHead>EID</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Cell #</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Profile</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -105,13 +117,16 @@ export default function EmployeeListsPage() {
                   Array.from({ length: 5 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                     </TableRow>
                   ))
                 ) : humanityEmployees.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                       No employees found
                     </TableCell>
                   </TableRow>
@@ -119,11 +134,28 @@ export default function EmployeeListsPage() {
                   humanityEmployees.map((emp) => (
                     <TableRow key={emp.eid}>
                       <TableCell>{emp.name}</TableCell>
-                      <TableCell>{emp.job_title || "-"}</TableCell>
+                      <TableCell className="font-mono text-sm">{emp.eid}</TableCell>
+                      <TableCell>{emp.email || "—"}</TableCell>
+                      <TableCell>{emp.mobile || emp.phone || "—"}</TableCell>
                       <TableCell>
-                        {emp.status_in_humanity && (
-                          <Badge variant="secondary">{emp.status_in_humanity}</Badge>
-                        )}
+                        <Badge variant={emp.status === 1 ? "default" : "secondary"}>
+                          {emp.status === 1 ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <a
+                            href={`https://xasecurity.humanity.com/app/staff/detail/${emp.id}/`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Open
+                          </a>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
@@ -138,10 +170,11 @@ export default function EmployeeListsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>City</TableHead>
-                  <TableHead>Province</TableHead>
+                  <TableHead>Employee Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Cell #</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Profile</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -149,27 +182,43 @@ export default function EmployeeListsPage() {
                   Array.from({ length: 5 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-28" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                     </TableRow>
                   ))
                 ) : qboEmployees.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                       No employees found
                     </TableCell>
                   </TableRow>
                 ) : (
                   qboEmployees.map((emp) => (
                     <TableRow key={emp.id}>
-                      <TableCell>{`${emp.firstName || ""} ${emp.lastName || ""}`}</TableCell>
-                      <TableCell>{emp.primaryAddress?.city || "-"}</TableCell>
-                      <TableCell>{emp.primaryAddress?.countrySubDivisionCode || "-"}</TableCell>
+                      <TableCell>{`${emp.firstName || ""} ${emp.lastName || ""}`.trim()}</TableCell>
+                      <TableCell>{emp.primaryEmailAddress?.Address || "—"}</TableCell>
+                      <TableCell>{emp.mobile?.FreeFormNumber || "—"}</TableCell>
                       <TableCell>
                         <Badge variant={emp.status === "ACTIVE" ? "default" : "secondary"}>
                           {emp.status || "Unknown"}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <a
+                            href={`https://qbo.intuit.com/app/employeeProfile?jobId=payroll&eeid=${emp.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Open
+                          </a>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
