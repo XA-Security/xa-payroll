@@ -129,7 +129,7 @@ export function AppSidebar({
       <SidebarHeader>
         <div className="flex items-center gap-3 px-2 py-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-black text-white hover:bg-black/90 transition-colors overflow-hidden" title="XA Payroll Portal">
-            <Image src="/Logos/Main Logo/PNG/72 ppi/XA_Logo-White.png" alt="XA Logo" width={36} height={36} className="size-full object-cover" />
+            <Image src="/favicon.png" alt="XA Logo" width={36} height={36} className="size-full object-cover" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
             <span className="truncate font-semibold">{companyData.name}</span>
