@@ -8,6 +8,7 @@ import {
   Users,
   Package,
   Flag,
+  Lock,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -51,6 +52,11 @@ const navMainData = [
       { title: "Payroll Projects", url: "/dashboard/payroll/projects" },
       { title: "Payroll Tracker", url: "/dashboard/payroll/payroll-tracker" },
     ],
+  },
+  {
+    title: "Secure Portal",
+    url: "/secure",
+    icon: Lock,
   },
 ]
 
