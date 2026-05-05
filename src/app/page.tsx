@@ -1,10 +1,16 @@
 import { Suspense } from "react";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import LightPillar from "@/components/LightPillar";
 import AuthForm from "@/components/auth/auth-form";
 import LoginContent from "@/components/auth/login-content";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) redirect("/dashboard");
+
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-6 md:p-10">
       {/* Full-page light pillar background with XA brand colors */}
