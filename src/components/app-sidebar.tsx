@@ -146,7 +146,7 @@ export function AppSidebar({
       <SidebarContent>
         {navData && <NavMain items={navData} versionConfig={versionConfig} />}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="p-0">
         <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />
