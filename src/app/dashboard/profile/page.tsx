@@ -123,7 +123,7 @@ function ProfileContent() {
         {/* Avatar Section */}
         <div className="flex flex-col items-center mb-8 pb-8 border-b border-border">
           <div className="relative mb-4">
-            <div className="w-32 h-32 rounded-full bg-muted overflow-hidden flex items-center justify-center">
+            <div className="w-32 h-32 rounded-2xl bg-muted overflow-hidden flex items-center justify-center">
               {avatar ? (
                 <Image
                   src={avatar}
