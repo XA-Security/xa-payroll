@@ -77,13 +77,14 @@ export function PhoneVerifyModal({ open, onSuccess }: PhoneVerifyModalProps) {
 
       if (!response.ok) {
         setError(data.error || 'Failed to verify code')
-        setLoading(false)
         return
       }
 
+      setLoading(false)
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to verify code')
+    } finally {
       setLoading(false)
     }
   }
