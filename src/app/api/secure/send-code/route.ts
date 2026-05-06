@@ -1,7 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import twilio from 'twilio'
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
 
 export const runtime = 'nodejs'
 
@@ -23,11 +21,25 @@ if (!validCredentials) {
   console.warn('Twilio credentials not configured. SMS will not work.')
 }
 
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, '10 m'),
-  prefix: 'xa_staff_sms',
-})
+// Simple in-memory rate limiter (Vercel will handle persistence)
+const requestCounts = new Map<string, { count: number; resetTime: number }>()
+
+function checkRateLimit(key: string, maxRequests = 3, windowMs = 10 * 60 * 1000): boolean {
+  const now = Date.now()
+  const record = requestCounts.get(key)
+
+  if (!record || now > record.resetTime) {
+    requestCounts.set(key, { count: 1, resetTime: now + windowMs })
+    return true
+  }
+
+  if (record.count < maxRequests) {
+    record.count++
+    return true
+  }
+
+  return false
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,17 +63,10 @@ export async function POST(request: NextRequest) {
     const formattedPhone = phone.startsWith('+') ? phone : `+1${phone.replace(/\D/g, '')}`
 
     // Rate limit by phone number
-    const { success, remaining, reset } = await ratelimit.limit(formattedPhone)
-
-    if (!success) {
+    if (!checkRateLimit(formattedPhone)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(Math.ceil((reset - Date.now()) / 1000))
-          }
-        }
+        { status: 429 }
       )
     }
 
