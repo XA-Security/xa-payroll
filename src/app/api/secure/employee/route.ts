@@ -26,20 +26,26 @@ export async function GET(request: NextRequest) {
     }
 
     const employee = await fetchEmployeeDetails(accessToken, session.eid)
-    if (!employee) {
+    if (!employee?.data) {
       return NextResponse.json(
         { error: 'Employee not found' },
         { status: 404 }
       )
     }
 
+    const emp = employee.data
+    const firstName = emp?.firstname || ''
+    const lastName = emp?.lastname || ''
+    const fullName = (firstName && lastName) ? `${firstName} ${lastName}`.trim() : emp?.name || 'Unknown'
+
     return NextResponse.json({
       humanity_id: session.humanity_id,
       eid: session.eid,
-      name: employee.name || employee.firstname ? `${employee.firstname} ${employee.lastname}` : 'Unknown',
-      email: employee.email || session.phone,
-      avatar: employee.photo || employee.avatar,
+      name: fullName,
+      email: emp?.email || session.phone,
+      avatar: emp?.photo || emp?.avatar,
       phone: session.phone,
+      cell_phone: emp?.cell_phone || emp?.mobile || null,
     })
   } catch (error: unknown) {
     console.error('Error fetching employee:', error)

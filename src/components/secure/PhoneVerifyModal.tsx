@@ -54,7 +54,13 @@ export function PhoneVerifyModal({ open, onSuccess }: PhoneVerifyModalProps) {
       }
 
       setLoading(false)
-      setStep('otp')
+
+      // Dev mode: skip OTP step and go straight to onSuccess
+      if (data.devMode === true) {
+        onSuccess()
+      } else {
+        setStep('otp')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send verification code')
     } finally {

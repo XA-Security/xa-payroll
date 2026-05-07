@@ -1,5 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import twilio from 'twilio'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import { encryptSession, SESSION_COOKIE_NAME, createSessionCookieOptions } from '@/lib/secure-session'
 
 export const runtime = 'nodejs'
 
@@ -52,15 +55,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Format phone number to E.164 format
+    const formattedPhone = phone.startsWith('+') ? phone : `+1${phone.replace(/\D/g, '')}`
+
+    // Dev mode bypass: if NEXT_PUBLIC_APP_URL includes p.xasecurity.ca, skip SMS and create session directly
+    const isDevMode = process.env.NEXT_PUBLIC_APP_URL?.includes('p.xasecurity.ca')
+    if (isDevMode) {
+      const supabaseAdmin = getSupabaseAdmin()
+
+      // Fetch employee from staff_list by phone number
+      const { data: staffMember, error: staffError } = await supabaseAdmin
+        .from('staff_list')
+        .select('*')
+        .eq('phone', formattedPhone)
+        .single() as unknown as { data: any | null; error: any }
+
+      if (staffError && staffError.code !== 'PGRST116') {
+        throw staffError
+      }
+
+      if (!staffMember) {
+        return NextResponse.json(
+          { error: "We couldn't find an account linked to this number. Please contact your supervisor." },
+          { status: 404 }
+        )
+      }
+
+      // Create encrypted session
+      const sessionPayload = {
+        humanity_id: staffMember.humanity_id,
+        eid: staffMember.eid,
+        phone: formattedPhone,
+        exp: Date.now() + 8 * 60 * 60 * 1000
+      }
+
+      const encryptedSession = encryptSession(sessionPayload)
+
+      // Set httpOnly cookie
+      const cookieStore = await cookies()
+      cookieStore.set(SESSION_COOKIE_NAME, encryptedSession, createSessionCookieOptions())
+
+      return NextResponse.json({
+        success: true,
+        devMode: true,
+        message: 'Dev mode: Session created successfully'
+      })
+    }
+
+    // Production: use Twilio SMS verification
     if (!client || !verifyServiceSid) {
       return NextResponse.json(
         { error: 'SMS service not configured' },
         { status: 503 }
       )
     }
-
-    // Format phone number to E.164 format
-    const formattedPhone = phone.startsWith('+') ? phone : `+1${phone.replace(/\D/g, '')}`
 
     // Rate limit by phone number
     if (!checkRateLimit(formattedPhone)) {

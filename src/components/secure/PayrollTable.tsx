@@ -13,15 +13,18 @@ interface PayrollEntry {
   }
   start_time: string
   end_time: string
+  shift_title?: string
   hours: {
     regular: number
     special: number
     overtime: number
     total: number
     cost: number
+    breaks: number
     rate: number | null
     position: { name: string }
     location: { name: string }
+    ratecard?: { name: string } | null
   }
   in_location_name: string
   out_location_name: string
@@ -82,10 +85,11 @@ export function PayrollTable({ isLoading, entries, error }: PayrollTableProps) {
       regular: acc.regular + entry.hours.regular,
       special: acc.special + entry.hours.special,
       overtime: acc.overtime + entry.hours.overtime,
+      breaks: acc.breaks + entry.hours.breaks,
       total: acc.total + entry.hours.total,
       cost: acc.cost + entry.hours.cost,
     }),
-    { regular: 0, special: 0, overtime: 0, total: 0, cost: 0 }
+    { regular: 0, special: 0, overtime: 0, breaks: 0, total: 0, cost: 0 }
   )
 
   // Sort by date
@@ -102,13 +106,18 @@ export function PayrollTable({ isLoading, entries, error }: PayrollTableProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Date</TableHead>
-                <TableHead>Time</TableHead>
+                <TableHead>Start Time</TableHead>
+                <TableHead>End Time</TableHead>
+                <TableHead>Shift Title</TableHead>
                 <TableHead>Location</TableHead>
-                <TableHead className="text-right">Regular Hrs</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead className="text-right">Reg Hrs</TableHead>
                 <TableHead className="text-right">OT Hrs</TableHead>
                 <TableHead className="text-right">STAT Hrs</TableHead>
+                <TableHead className="text-right">Breaks</TableHead>
                 <TableHead className="text-right">Total Hrs</TableHead>
                 <TableHead className="text-right">Rate</TableHead>
+                <TableHead className="text-right">Ratecard</TableHead>
                 <TableHead className="text-right">Cost</TableHead>
               </TableRow>
             </TableHeader>
@@ -118,18 +127,23 @@ export function PayrollTable({ isLoading, entries, error }: PayrollTableProps) {
                   <TableCell className="font-medium">
                     {format(new Date(entry.date.timestamp * 1000), 'MMM d, yyyy')}
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {entry.start_time} - {entry.end_time}
-                  </TableCell>
+                  <TableCell className="text-sm">{entry.start_time}</TableCell>
+                  <TableCell className="text-sm">{entry.end_time}</TableCell>
+                  <TableCell className="text-sm">{entry.shift_title || '-'}</TableCell>
                   <TableCell className="text-sm">
                     {entry.hours.location?.name || entry.in_location_name || '-'}
                   </TableCell>
-                  <TableCell className="text-right">{entry.hours.regular.toFixed(2)}</TableCell>
-                  <TableCell className="text-right">{entry.hours.overtime.toFixed(2)}</TableCell>
-                  <TableCell className="text-right">{entry.hours.special.toFixed(2)}</TableCell>
+                  <TableCell className="text-sm">{entry.hours.position?.name || '-'}</TableCell>
+                  <TableCell className="text-right text-sm">{entry.hours.regular.toFixed(2)}</TableCell>
+                  <TableCell className="text-right text-sm">{entry.hours.overtime.toFixed(2)}</TableCell>
+                  <TableCell className="text-right text-sm">{entry.hours.special.toFixed(2)}</TableCell>
+                  <TableCell className="text-right text-sm">{entry.hours.breaks.toFixed(2)}</TableCell>
                   <TableCell className="text-right font-semibold">{entry.hours.total.toFixed(2)}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right text-sm">
                     {entry.hours.rate ? `$${entry.hours.rate.toFixed(2)}` : '-'}
+                  </TableCell>
+                  <TableCell className="text-right text-sm">
+                    {entry.hours.ratecard?.name || '-'}
                   </TableCell>
                   <TableCell className="text-right font-semibold">
                     ${entry.hours.cost.toFixed(2)}
@@ -139,12 +153,13 @@ export function PayrollTable({ isLoading, entries, error }: PayrollTableProps) {
 
               {/* Summary row */}
               <TableRow className="bg-slate-50 font-semibold">
-                <TableCell colSpan={3}>TOTAL</TableCell>
+                <TableCell colSpan={6}>TOTAL</TableCell>
                 <TableCell className="text-right">{totals.regular.toFixed(2)}</TableCell>
                 <TableCell className="text-right">{totals.overtime.toFixed(2)}</TableCell>
                 <TableCell className="text-right">{totals.special.toFixed(2)}</TableCell>
+                <TableCell className="text-right">{totals.breaks.toFixed(2)}</TableCell>
                 <TableCell className="text-right">{totals.total.toFixed(2)}</TableCell>
-                <TableCell />
+                <TableCell colSpan={2} />
                 <TableCell className="text-right">${totals.cost.toFixed(2)}</TableCell>
               </TableRow>
             </TableBody>

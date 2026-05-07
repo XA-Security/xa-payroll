@@ -27,15 +27,18 @@ interface PayrollEntry {
   }
   start_time: string
   end_time: string
+  shift_title?: string
   hours: {
     regular: number
     special: number
     overtime: number
     total: number
     cost: number
+    breaks: number
     rate: number | null
     position: { name: string }
     location: { name: string }
+    ratecard?: { name: string } | null
   }
   in_location_name: string
   out_location_name: string

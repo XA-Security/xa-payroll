@@ -13,6 +13,8 @@ interface EmployeeProfileProps {
     eid: string
     email: string
     avatar?: string | null
+    phone?: string | null
+    cell_phone?: string | null
   } | null
 }
 
@@ -63,6 +65,9 @@ export function EmployeeProfile({ isLoading, data }: EmployeeProfileProps) {
             <div className="flex-1">
               <h2 className="text-xl font-semibold text-slate-900">{data.name}</h2>
               <p className="text-sm text-slate-600">{data.email}</p>
+              {(data.phone || data.cell_phone) && (
+                <p className="text-sm text-slate-500 mt-1">{data.phone || data.cell_phone}</p>
+              )}
             </div>
           </div>
 

@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     const payrollData = await fetchPayrollReport(accessToken, startDate, endDate)
 
     // Filter entries to only include this employee
-    const filteredEntries = payrollData.filter(
+    const filteredEntries = payrollData.data.filter(
       (entry: any) => String(entry.userid) === String(session.humanity_id)
     )
 
